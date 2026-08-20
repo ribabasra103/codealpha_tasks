@@ -1,0 +1,160 @@
+FAQ Chatbot
+What does it do?
+
+The chatbot has a list of questions and answers. When the user asks a question, the program:
+
+Takes the user's question.
+Cleans the text.
+Compares it with stored FAQ questions.
+Finds the most similar question.
+Shows its answer.
+If no good match is found, it says it doesn't understand.
+Example
+
+FAQ stored:
+
+Question	Answer
+What are your opening hours?	We are open from 9 AM to 5 PM.
+How can I contact support?	You can contact support by email.
+What is your refund policy?	Refunds are available within 30 days.
+
+User:
+When are you open?
+
+Chatbot:
+We are open from 9 AM to 5 PM.
+First install the required libraries:
+pip install nltk scikit-learn
+Then create chatbot.py:
+import nltk
+import re
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+nltk.download('punkt')
+
+# FAQ Questions
+questions = [
+    "What are your opening hours?",
+    "How can I contact support?",
+    "What is your refund policy?",
+    "How can I place an order?",
+    "How can I cancel my order?"
+]
+
+# FAQ Answers
+answers = [
+    "We are open from 9 AM to 5 PM.",
+    "You can contact our support team by email.",
+    "Our refund policy allows refunds within 30 days.",
+    "You can place an order through our website.",
+    "You can cancel your order by contacting customer support."
+]
+
+
+def clean_text(text):
+    text = text.lower()
+    text = re.sub(r'[^a-zA-Z0-9\s]', '', text)
+    return text
+
+
+def get_answer(user_question):
+
+    user_question = clean_text(user_question)
+
+    cleaned_questions = [
+        clean_text(q) for q in questions
+    ]
+
+    all_questions = cleaned_questions + [user_question]
+
+    vectorizer = TfidfVectorizer()
+
+    vectors = vectorizer.fit_transform(all_questions)
+
+    similarity = cosine_similarity(
+        vectors[-1],
+        vectors[:-1]
+    )
+
+    best_match = similarity.argmax()
+    score = similarity[0][best_match]
+
+    if score < 0.2:
+        return "Sorry, I don't understand your question."
+
+    return answers[best_match]
+
+
+print("FAQ Chatbot")
+print("Type 'exit' to stop.")
+
+while True:
+
+    user_input = input("You: ")
+
+    if user_input.lower() == "exit":
+        print("Bot: Goodbye!")
+        break
+
+    response = get_answer(user_input)
+
+    print("Bot:", response)
+    We first store questions and answers:
+    questions = [...]
+answers = [...]
+def clean_text(text):
+This converts text to lowercase and removes unnecessary symbols.
+
+For example:
+
+"What are your Opening Hours?"
+
+becomes:
+
+"what are your opening hours"
+TF-IDF converts words into numbers so that the computer can compare questions.
+Cosine similarity checks how similar two questions are.
+
+For example:
+
+"When are you open?"
+
+and
+
+"What are your opening hours?"
+
+are considered similar.
+The chatbot selects the FAQ question with the highest similarity score and returns its answer.
+FAQ Chatbot
+Type 'exit' to stop.
+
+You: When are you open?
+
+Bot: We are open from 9 AM to 5 PM.
+
+You: How do I get help?
+
+Bot: You can contact our support team by email.
+
+You: How can I get my money back?
+
+Bot: Our refund policy allows refunds within 30 days.
+
+You: exit
+
+Bot: Goodbye!
+You can later make a web interface like:
+╔══════════════════════════════════╗
+║          FAQ CHATBOT             ║
+╠══════════════════════════════════╣
+║                                  ║
+║  You: When are you open?         ║
+║                                  ║
+║  Bot: We are open from           ║
+║       9 AM to 5 PM.              ║
+║                                  ║
+╠══════════════════════════════════╣
+║ Type your question...      [Send]║
+╚══════════════════════════════════╝
