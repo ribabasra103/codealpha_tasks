@@ -1,0 +1,105 @@
+This project uses Artificial Intelligence to create new music.
+
+The basic idea is:
+
+MIDI Music → Preprocessing → AI Model → Generate New Notes → MIDI File → Play Music
+
+1. Collect MIDI Data
+
+First, collect MIDI files of music such as:
+
+🎹 Classical
+🎷 Jazz
+🎼 Piano music
+
+MIDI files contain information about notes, timing, duration, and instruments.
+Use the Python library music21 to read MIDI files.
+
+The music is converted into sequences of notes.
+
+For example:
+C → D → E → G → E → D → C
+The AI learns these patterns and relationships between notes.
+
+Install it using:
+pip install music21
+An LSTM (Long Short-Term Memory) model is a good choice because it can learn sequences.
+
+Simple structure:
+Input Notes
+     ↓
+Embedding
+     ↓
+LSTM
+     ↓
+LSTM
+     ↓
+Dense Layer
+     ↓
+Next Note
+Give the model many music sequences.
+
+For example:
+Input:  C D E G
+Output: E
+Another example:
+Input:  D E F A
+Output: G
+Give the trained model a starting sequence:
+C D E
+The model predicts the next note:
+C D E → G
+Then:
+C D E G → A
+C D E G A → G
+The generated notes are converted back into a MIDI file using music21.
+
+Example:
+
+from music21 import stream, note
+
+
+music = stream.Stream()
+
+
+notes = ["C4", "D4", "E4", "G4", "E4", "D4"]
+
+
+for n in notes:
+    music.append(note.Note(n))
+
+
+music.write("midi", fp="generated_music.mid")
+
+This creates:
+
+generated_music.mid
+
+You can open the MIDI file in a music player or MIDI software.
+
+Simple Project Workflow
+       MIDI DATA
+           ↓
+     Collect Music
+           ↓
+     Preprocessing
+       (music21)
+           ↓
+    Note Sequences
+           ↓
+      LSTM / RNN
+           ↓
+       Training
+           ↓
+    Generate Notes
+           ↓
+      MIDI File
+           ↓
+      🎵 Music
+Technologies Used
+Technology	Purpose
+Python	Main programming language
+music21	Read and create MIDI music
+TensorFlow/Keras	Build the AI model
+LSTM/RNN	Learn music sequences
+MIDI	Store generated music
