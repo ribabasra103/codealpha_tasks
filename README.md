@@ -9,7 +9,7 @@ Project Structure:
 language-translator/
 │── index.html
 │── style.css
-│── script.js<!DOCTYPE html>
+│── script.js
 <!DOCTYPE html>
 <html lang="en">
 <head>
